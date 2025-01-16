@@ -1,0 +1,55 @@
+/* style.css */
+#age-verification-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+#age-popup-content {
+    background: #fff;
+    padding: 20px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    width: 90%;
+    max-width: 400px;
+}
+
+#age-popup-content img {
+    margin-bottom: 10px;
+}
+
+#age-popup-content h2 {
+    font-size: 24px;
+}
+
+#age-popup-content p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+#age-popup-content button {
+    margin: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#age-popup-content button#confirm-age {
+    background: var(--confirm-bg-color, #28a745);
+    color: var(--confirm-text-color, #ffffff);
+}
+
+#age-popup-content button#deny-age {
+    background: var(--deny-bg-color, #dc3545);
+    color: var(--deny-text-color, #ffffff);
+}

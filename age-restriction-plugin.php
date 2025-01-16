@@ -16,7 +16,8 @@ if (!defined('ABSPATH')) {
 
 // Enqueue styles and scripts for the popup
 function age_restriction_enqueue_scripts() {
-    wp_enqueue_style('age-restriction-style', plugins_url('style.css', __FILE__));
+    wp_enqueue_style('age-restriction-style', plugins_url('assets/css/style.css', __FILE__));
+    wp_enqueue_script('age-restriction-script', plugins_url('assets/js/script.js', __FILE__), array('jquery'), false, true);
 }
 add_action('wp_enqueue_scripts', 'age_restriction_enqueue_scripts');
 
@@ -175,9 +176,11 @@ add_action('customize_register', 'age_restriction_customize_register');
 
 // Display the age verification popup
 function age_restriction_popup() {
-    if (!isset($_COOKIE['age_verified'])) {  ?>
-        <div id="age-verification-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 9999; display: flex; justify-content: center; align-items: center; overflow: hidden;">
-            <div id="age-popup-content" style="background: #fff; padding: 20px; text-align: center; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); width: 90%; max-width: 400px;">
+    if (!isset($_COOKIE['age_verified'])) {  
+        ?>
+        <div id="age-verification-overlay" style="display: flex;">
+            <div id="age-popup-content" data-deny-title="<?php echo esc_attr(get_theme_mod('age_restriction_deny_title', 'Access Forbidden')); ?>"
+                 data-deny-message="<?php echo esc_attr(get_theme_mod('age_restriction_deny_message', 'Your access is restricted because of your age.')); ?>">
                 <?php 
                 // Get dynamic settings
                 $logo_url = get_theme_mod('age_restriction_logo');
@@ -197,36 +200,20 @@ function age_restriction_popup() {
                 <?php endif; ?>
                 <h2><?php echo esc_html($title); ?></h2>
                 <p style="font-size: 18px; margin-bottom: 20px;"><?php echo esc_html($message); ?></p>
-                <button id="confirm-age" style="margin: 10px; padding: 10px 20px; background: <?php echo esc_attr($confirm_bg_color); ?>; color: <?php echo esc_attr($confirm_text_color); ?>; border: none; border-radius: 5px; cursor: pointer;"><?php echo esc_html($confirm_text); ?></button>
-                <button id="deny-age" style="margin: 10px; padding: 10px 20px; background: <?php echo esc_attr($deny_bg_color); ?>; color: <?php echo esc_attr($deny_text_color); ?>; border: none; border-radius: 5px; cursor: pointer;"><?php echo esc_html($deny_text); ?></button>
+                <button id="confirm-age"><?php echo esc_html($confirm_text); ?></button>
+                <button id="deny-age"><?php echo esc_html($deny_text); ?></button>
             </div>
         </div>
+
         <script>
-            // Lock scroll when the popup is shown
-            document.body.style.overflow = 'hidden';
-
-            document.getElementById('confirm-age').addEventListener('click', function() {
-                document.cookie = "age_verified=true; path=/; max-age=" + (60*60*24*30); // 30 days
-                document.getElementById('age-verification-overlay').style.display = 'none';
-                document.body.style.overflow = 'auto'; // Restore scroll when confirmed
-            });
-
-            document.getElementById('deny-age').addEventListener('click', function() {
-                var denyTitle = "<?php echo esc_js(get_theme_mod('age_restriction_deny_title', 'Access Forbidden')); ?>";
-                var denyMessage = "<?php echo esc_js(get_theme_mod('age_restriction_deny_message', 'Your access is restricted because of your age.')); ?>";
-                
-                document.getElementById('age-popup-content').innerHTML = `
-                    <h2>${denyTitle}</h2>
-                    <p>${denyMessage}</p>
-                `;
-                
-                
-            });
+            // Add dynamic styles for button colors
+            document.documentElement.style.setProperty('--confirm-bg-color', '<?php echo esc_attr($confirm_bg_color); ?>');
+            document.documentElement.style.setProperty('--confirm-text-color', '<?php echo esc_attr($confirm_text_color); ?>');
+            document.documentElement.style.setProperty('--deny-bg-color', '<?php echo esc_attr($deny_bg_color); ?>');
+            document.documentElement.style.setProperty('--deny-text-color', '<?php echo esc_attr($deny_text_color); ?>');
         </script>
         <?php
     }
 }
 
-
 add_action('wp_footer', 'age_restriction_popup');
-?>
